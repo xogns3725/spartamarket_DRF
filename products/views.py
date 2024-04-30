@@ -7,6 +7,9 @@ from .models import Product
 from rest_framework.pagination import PageNumberPagination
 
 class ProductListAPIView(APIView):
+    def get_object(self, productID):
+        return get_object_or_404(Product, id=productID)
+    
     def get(self, request):
         paginator = PageNumberPagination()
         paginator.page_size = 3
@@ -22,9 +25,15 @@ class ProductListAPIView(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
     def put(self, request, productID):
-        product = get_object_or_404(Product, id=productID)
+        product = self.get_object(productID)
         serializer = ProductSerializer(
             product, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+    def delete(self, request, productID):
+        product = self.get_object(productID)
+        product.delete()
+        data = {"pk": f"{productID} is deleted."}
+        return Response(data, status=status.HTTP_200_OK)
