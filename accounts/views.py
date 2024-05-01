@@ -6,8 +6,11 @@ from .models import User
 from .serializers import UserSerializer
 
 class UserListAPIView(APIView):
+    def get_object(self, username):
+        return get_object_or_404(User, username=username)
+    
     def get(self, request, username):
-        user = get_object_or_404(User, username=username)
+        user = self.get_object(username)
         if request.user.username == user.username:
                 serializer = UserSerializer(user)
                 return Response(serializer.data)
@@ -18,4 +21,11 @@ class UserListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-
+    def put(self, request, username):
+        user = self.get_object(username)
+        if request.user.username == user.username:
+            serializer = UserSerializer(
+                user, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)

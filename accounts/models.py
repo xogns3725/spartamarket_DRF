@@ -14,5 +14,5 @@ class User(AbstractUser):
         ('M', 'Male'),
         ('F', 'Female'),
     ]
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
-    introduction = models.TextField(null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+    introduction = models.TextField(null=True, blank=True)
