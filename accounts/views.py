@@ -5,6 +5,9 @@ from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password
 from .models import User
 from .serializers import UserPasswordSerializer, UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+
 
 class UserListAPIView(APIView):
     def get_object(self, username):
@@ -48,3 +51,15 @@ class UserUpdateAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if request.data:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        else:    
+            return Response(status=status.HTTP_400_BAD_REQUEST)
