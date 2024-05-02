@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from .models import User
-
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -26,6 +27,30 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
-        return super(UserSerializer, self).create(validated_data)
+        user = User.objects.create(**validated_data)
+        return user
 
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+class UserPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ['password']
+
+    def validate(self, data):
+        new_password = data.get('password')
+        validate_password(new_password)
+        user = self.instance
+        if user and check_password(new_password, user.password):
+            raise ValidationError("비밀번호가 이전과 같습니다.")
+        return data
+    
+    def update(self, instance, validated_data):
+        instance.password = make_password(validated_data['password'])
+        instance.save()
+        return instance
 

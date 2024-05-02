@@ -18,7 +18,8 @@ class ProductListAPIView(APIView):
         paginator.page_size = 3
         
         products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
+        result_page = paginator.paginate_queryset(products, request)
+        serializer = ProductSerializer(result_page, many=True)
         return Response(serializer.data)
     
     def post(self, request):

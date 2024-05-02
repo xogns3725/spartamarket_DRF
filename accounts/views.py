@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserPasswordSerializer, UserSerializer
 
 class UserListAPIView(APIView):
     def get_object(self, username):
@@ -22,6 +22,7 @@ class UserListAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     def put(self, request, username):
+        print(0)
         user = self.get_object(username)
         if request.user.username == user.username:
             serializer = UserSerializer(
@@ -29,3 +30,13 @@ class UserListAPIView(APIView):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data)
+            
+        
+class UserUpdateAPIView(APIView):
+    def put(self, request):
+        user = get_object_or_404(User, username=request.user.username)
+        serializer = UserPasswordSerializer(
+            user, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
