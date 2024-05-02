@@ -32,7 +32,7 @@
 ![](https://velog.velcdn.com/images/xogns3725/post/ceb0b869-8eb0-418e-b68d-4561162e9706/image.png)
 
 - 로그아웃
-![](https://velog.velcdn.com/images/xogns3725/post/1b41efc3-fcd8-4329-ad39-81f6bfeea727/image.png)
+![](https://velog.velcdn.com/images/xogns3725/post/bbd9f453-f928-4d1e-a16d-8a86a18580f5/image.png)
 
 - 회원정보수정
 ![](https://velog.velcdn.com/images/xogns3725/post/9ca1df7d-df8e-4ca1-89f3-8a63678bac77/image.png)
